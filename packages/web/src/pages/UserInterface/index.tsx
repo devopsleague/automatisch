@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import Skeleton from '@mui/material/Skeleton';
+import { useTheme } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useSnackbar } from 'notistack';
 
@@ -14,7 +16,6 @@ import TextField from 'components/TextField';
 import useFormatMessage from 'hooks/useFormatMessage';
 import ColorInput from 'components/ColorInput';
 import nestObject from 'helpers/nestObject';
-import { Skeleton, useTheme } from '@mui/material';
 
 type UserInterface = {
   palette: {
@@ -28,6 +29,17 @@ type UserInterface = {
     svgData: string;
   };
 };
+
+const defaultPrimaryMainColor = '#0059F7';
+const defaultPrimaryDarkColor = '#001F52';
+const defaultPrimaryLightColor = '#4286FF';
+
+const getPrimaryMainColor = (color: string | undefined) =>
+  color?.length === 0 ? defaultPrimaryMainColor : color;
+const getPrimaryDarkColor = (color: string | undefined) =>
+  color?.length === 0 ? defaultPrimaryDarkColor : color;
+const getPrimaryLightColor = (color: string | undefined) =>
+  color?.length === 0 ? defaultPrimaryLightColor : color;
 
 export default function UserInterface(): React.ReactElement {
   const formatMessage = useFormatMessage();
@@ -48,9 +60,15 @@ export default function UserInterface(): React.ReactElement {
       await updateConfig({
         variables: {
           input: {
-            'palette.primary.main': uiData?.palette?.primary.main,
-            'palette.primary.dark': uiData?.palette?.primary.dark,
-            'palette.primary.light': uiData?.palette?.primary.light,
+            'palette.primary.main': getPrimaryMainColor(
+              uiData?.palette?.primary.main
+            ),
+            'palette.primary.dark': getPrimaryDarkColor(
+              uiData?.palette?.primary.dark
+            ),
+            'palette.primary.light': getPrimaryLightColor(
+              uiData?.palette?.primary.light
+            ),
             'logo.svgData': uiData?.logo?.svgData,
           },
         },
